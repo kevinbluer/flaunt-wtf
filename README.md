@@ -16,15 +16,16 @@ yarn
 
 ## Libraries
 
-- Ethers
+- ethers
 - IPFS
-- React Sketch
-- React Router
-- React-bulma-components
+- [react-sketch](https://github.com/tbolis/react-sketch)
+- react-router
+- react-bulma-components
 - OpenZeppelin
 
 ## Inspiration
 
+- https://github.com/yusefnapora/minty
 - https://nfte.app/
 - https://github.com/contextart/nfte
 - https://couds.github.io/react-bulma-components/?path=/story/container--default

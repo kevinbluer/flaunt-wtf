@@ -28,7 +28,8 @@ function App() {
   const _sketch = useRef();
 
   const load = () => {
-    alert('beeple')
+    // alert('beeple')
+    debugger
     _sketch.current.addImg('https://ipfsgateway.makersplace.com/ipfs/QmZ15eQX8FPjfrtdX3QYbrhZxJpbLpvDpsgb2p3VEH8Bqq')
   }
 
