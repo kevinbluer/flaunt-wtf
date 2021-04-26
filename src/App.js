@@ -1,10 +1,19 @@
 import './App.css';
+
 import React, { useRef, useState } from "react";
 
 import axios from 'axios';
 import styled from 'styled-components';
 import {SketchField, Tools} from 'react-sketch';
 import { ethers } from "ethers";
+import { Container } from 'react-bulma-components';
+
+import {
+  Switch,
+  Route,
+} from "react-router-dom";
+
+import Navigation from "./Components/Navigation";
 
 import eyes from './Assets/eyes.png';
 import shades from './Assets/shades.png';
@@ -153,36 +162,47 @@ function App() {
   }
 
   return (
-    <div className="App">
-      <header className="App-header">
-        <div>
-          <Button onClick={() => load()}>load</Button>
-          <Button onClick={() => save()}>save</Button>
-          <Button onClick={() => mint()}>mint</Button>
+    <Switch>
+      <Route path="/" exact>
+        <div className="App">
+          <Navigation />
+          <header className="App-header">
+            <div>
+              <Button onClick={() => load()}>load</Button>
+              <Button onClick={() => save()}>save</Button>
+              <Button onClick={() => mint()}>mint</Button>
+            </div>
+            <div>
+              <MemeButton onClick={() => dogeify()}>dogeify</MemeButton>
+              <MemeButton onClick={() => laserify()}>laserify</MemeButton>
+              <MemeButton onClick={() => trollify()}>trollify</MemeButton>
+              <MemeButton onClick={() => thugify()}>thugify</MemeButton>
+              |
+              <MemeButton onClick={() => select()}>select</MemeButton>
+              <MemeButton onClick={() => text()}>text</MemeButton>
+              <MemeButton onClick={() => pen()}>pen</MemeButton>
+              <MemeButton onClick={() => remove()}>remove</MemeButton>
+              <span>{imageUrl}</span>
+            </div>
+            <StyledSketchField 
+              width='640px' 
+              height='640px' 
+              tool={tool} 
+              lineColor='black'
+              lineWidth={3}
+              ref={(c) => { _sketch.current = c }}
+              name='sketch'
+              />
+          </header>
         </div>
-        <div>
-          <MemeButton onClick={() => dogeify()}>dogeify</MemeButton>
-          <MemeButton onClick={() => laserify()}>laserify</MemeButton>
-          <MemeButton onClick={() => trollify()}>trollify</MemeButton>
-          <MemeButton onClick={() => thugify()}>thugify</MemeButton>
-          |
-          <MemeButton onClick={() => select()}>select</MemeButton>
-          <MemeButton onClick={() => text()}>text</MemeButton>
-          <MemeButton onClick={() => pen()}>pen</MemeButton>
-          <MemeButton onClick={() => remove()}>remove</MemeButton>
-          <span>{imageUrl}</span>
+      </Route>
+      <Route path="/gallery">
+        <div className="App">
+          <Navigation />
+          <h2>Gallery</h2>
         </div>
-        <StyledSketchField 
-          width='640px' 
-          height='640px' 
-          tool={tool} 
-          lineColor='black'
-          lineWidth={3}
-          ref={(c) => { _sketch.current = c }}
-          name='sketch'
-          />
-      </header>
-    </div>
+      </Route>
+    </Switch>
   );
 }
 

@@ -2,6 +2,7 @@
 .App {
   text-align: center;
   background: url(./Assets/background.png);
+  font-family: "courier"
 }
 
 .App-logo {
