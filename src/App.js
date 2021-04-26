@@ -79,6 +79,7 @@ const MemeButton = styled.button`
 function App() {
   const [imageUrl, setImageUrl] = useState('');
   const [tool, setTool] = useState(Tools.Select);
+  const [mintModal, setMintModal] = useState(false);
 
   const _sketch = useRef();
 
@@ -146,7 +147,7 @@ function App() {
   const save = async () => {
     const reader = new FileReader()
     reader.onloadend = async function () {
-      const fileContents = `<svg xmlns="http://www.w3.org/2000/svg"><image href="${reader.result}" /></svg>`;
+      const fileContents = `<svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%"><image width="100%" height="100%" href="${reader.result}" /></svg>`;
       const ipfsImg = await ipfs.add(fileContents);
       setImageUrl(`ipfs://${ipfsImg}`);
 
@@ -165,9 +166,14 @@ function App() {
   }
 
   const mint = () => {
-    const img = _sketch.current.toDataURL()
-    ipfs.add(img).then(console.log).catch(console.log);
+    if (mintModal) {
+      setMintModal(false)
+    } else {
+      setMintModal(true)
+    }
   }
+
+
 
   return (
     <Switch>
@@ -202,6 +208,23 @@ function App() {
               name='sketch'
               />
           </header>
+          <div
+            className={`modal ${ mintModal ? 'is-active' : ''}`}
+          >
+            <div className="modal-background"></div>
+            <div className="modal-content">
+
+            <header className="modal-card-head">
+              <p className="modal-card-title">Mint</p>
+              <button className="delete" aria-label="close" onClick={()=>mint()}></button>
+            </header>
+            <section className="modal-card-body">
+              <div>Select your network</div>
+              {imageUrl}
+
+            </section>
+            </div>
+          </div>
         </div>
       </Route>
       <Route path="/gallery">
