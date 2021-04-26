@@ -6,7 +6,14 @@ import axios from 'axios';
 import styled from 'styled-components';
 import {SketchField, Tools} from 'react-sketch';
 import { ethers } from "ethers";
-import { Container } from 'react-bulma-components';
+import { 
+  Button,
+  Content,
+  Container,
+  Media,
+  Modal,
+  Image
+} from 'react-bulma-components';
 
 import {
   Switch,
@@ -14,6 +21,7 @@ import {
 } from "react-router-dom";
 
 import Navigation from "./Components/Navigation";
+import Gallery from "./Pages/Gallery";
 
 import eyes from './Assets/eyes.png';
 import shades from './Assets/shades.png';
@@ -42,7 +50,7 @@ const StyledSketchField = styled(SketchField)`
   background-color: #576071;
 `;
 
-const Button = styled.button`
+const StyledButton = styled.button`
   margin: 1rem 0.4rem;
   border: solid 1px orange;
   border-radius: 1rem;
@@ -168,9 +176,9 @@ function App() {
           <Navigation />
           <header className="App-header">
             <div>
-              <Button onClick={() => load()}>load</Button>
-              <Button onClick={() => save()}>save</Button>
-              <Button onClick={() => mint()}>mint</Button>
+              <StyledButton onClick={() => load()}>load</StyledButton>
+              <StyledButton onClick={() => save()}>save</StyledButton>
+              <StyledButton onClick={() => mint()}>mint</StyledButton>
             </div>
             <div>
               <MemeButton onClick={() => dogeify()}>dogeify</MemeButton>
@@ -199,7 +207,7 @@ function App() {
       <Route path="/gallery">
         <div className="App">
           <Navigation />
-          <h2>Gallery</h2>
+          <Gallery />
         </div>
       </Route>
     </Switch>
