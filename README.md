@@ -23,6 +23,8 @@ yarn
 - react-bulma-components
 - OpenZeppelin
 
+curl -X POST -F [kevin.bluer@consensys.net] "https://ipfs.infura.io:5001/api/v0/add?quiet=<value>&quieter=<value>&silent=<value>&progress=<value>&trickle=<value>&only-hash=<value>&wrap-with-directory=<value>&chunker=size-262144&pin=true&raw-leaves=<value>&nocopy=<value>&fscache=<value>&cid-version=<value>&hash=sha2-256&inline=<value>&inline-limit=32"
+
 ## Inspiration
 
 - https://github.com/yusefnapora/minty
@@ -37,9 +39,9 @@ yarn
 
 - [ ] Directories (components, etc)
 - [ ] Ability to load an NFT (address bar / id)
-- [ ] Ability to meme-ify (sketch on top, add icons, emojis, etc)
-- [ ] Ability to save generated metadata to IPFs (and recieved CID)
+- [x] Ability to meme-ify (sketch on top, add icons, emojis, etc)
+- [x] Ability to save generated metadata to IPFs (and recieved CID)
 - [ ] Ability to generate the derivative (new) NFT on an L2
 - [ ] Ability to move asset back to L1 via bridge
-- [ ] Ability to what other people have created, etc
-- [ ] Ability to flaunt.wtf!
+- [ ] Ability to view what other people have created, etc (should be just incrementing the ids)
+- [ ] Ability to flaunt.wtf
