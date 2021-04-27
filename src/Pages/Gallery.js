@@ -19,7 +19,7 @@ const Gallery = ({contract}) => {
     <div className="App">
       <h2>Gallery</h2>
       <header className="App-header">
-        All the newly minted goods
+        newly minted goodness
         {assets}
       </header>
     </div>

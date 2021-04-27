@@ -246,6 +246,8 @@ function App() {
                 <button onClick={() => load()}>load from contract</button>
               </div>
             </section>
+            <footer className="modal-card-foot">
+            </footer>
             </div>
           </div>
 
@@ -261,6 +263,8 @@ function App() {
               <p>Metadata CID: <a href={`ipfs://${metadataCID}`} target="_blank">{`ipfs://${metadataCID}`}</a></p>
               <p>Awesome, you're now ready to mint!</p>
             </section>
+            <footer className="modal-card-foot">
+            </footer>
             </div>
           </div>
 
@@ -272,9 +276,11 @@ function App() {
               <button className="delete" aria-label="close" onClick={()=>mint()}></button>
             </header>
             <section className="modal-card-body">
-              <div>Select your network</div>
-              <button onClick={()=>mintNFT()}>Mint</button>
+              <div></div>
+              <button onClick={()=>mintNFT()}>Mint to L1</button>
             </section>
+            <footer className="modal-card-foot">
+            </footer>
             </div>
           </div>
 
