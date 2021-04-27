@@ -33,9 +33,15 @@ const ipfs = new IPFS({ host: 'ipfs.infura.io', port: 5001, protocol: 'https' })
 
 // const provider = new ethers.providers.InfuraProvider();
 // const provider = new ethers.providers.JsonRpcProvider(`http://localhost:9545`);
-let provider;
-window.ethereum.enable().then(provider = new ethers.providers.Web3Provider(window.ethereum));
-const signer = provider.getSigner();
+let provider, signer;
+let walletDetected = !!window.ethereum;
+
+try {
+  window.ethereum.enable().then(provider = new ethers.providers.Web3Provider(window.ethereum));
+  signer = provider.getSigner();
+} catch (err) {
+  // TODO
+}
 
 const abi = [
   "function totalSupply() view returns (uint)",
@@ -113,6 +119,7 @@ const ThumbImg = styled.img`
   border-radius: 1rem;
   width: 6rem;
   padding: 0.2rem;
+  cursor: pointer;
 `;
 
 function App() {
@@ -340,7 +347,7 @@ function App() {
       <Route path="/gallery">
         <div className="App">
           <Navigation />
-          <Gallery contract={contract} />
+          <Gallery contract={contract} walletDetected={walletDetected} />
         </div>
       </Route>
       <Route path="/about">

@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 
 import { Button  } from 'react-bulma-components';
 
-const Gallery = ({contract}) => {
+const Gallery = ({contract, walletDetected}) => {
   const [assets, setAssets] = useState([])
   const [totalSupply, setTotalSupply] = useState(0)
 
@@ -27,7 +27,9 @@ const Gallery = ({contract}) => {
   }
 
   useEffect(() => {
-    load()
+    if (walletDetected) {
+      load()
+    }
   }, [])
   
   return (
