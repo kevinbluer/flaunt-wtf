@@ -30,12 +30,17 @@ const Navigation = () => {
           <Navbar.Container>
             <Navbar.Item renderAs="span">
               <StyledLink to="/">
-                Home
+                home
               </StyledLink>
             </Navbar.Item>
-            <Navbar.Item renderAs="span" position="end">
+            <Navbar.Item renderAs="span">
               <StyledLink to="/gallery">
-                Gallery
+                gallery
+              </StyledLink>
+            </Navbar.Item>
+            <Navbar.Item renderAs="span">
+              <StyledLink to="/about">
+                about
               </StyledLink>
             </Navbar.Item>
           </Navbar.Container>

@@ -6,14 +6,6 @@ import axios from 'axios';
 import styled from 'styled-components';
 import {SketchField, Tools} from 'react-sketch';
 import { ethers } from "ethers";
-import { 
-  Button,
-  Content,
-  Container,
-  Media,
-  Modal,
-  Image
-} from 'react-bulma-components';
 
 import {
   Switch,
@@ -22,6 +14,7 @@ import {
 
 import Navigation from "./Components/Navigation";
 import Gallery from "./Pages/Gallery";
+import About from "./Pages/About";
 
 import eyes from './Assets/eyes.png';
 import shades from './Assets/shades.png';
@@ -29,21 +22,29 @@ import doge from './Assets/doge.png';
 import joint from './Assets/joint.png';
 import troll from './Assets/troll.png';
 
+import sample1 from './Assets/sample-1.png';
+import sample2 from './Assets/sample-2.jpg';
+import sample3 from './Assets/sample-3.jpg';
+
 const fabric = require("fabric").fabric;
 
 const IPFS = require('ipfs-mini');
 const ipfs = new IPFS({ host: 'ipfs.infura.io', port: 5001, protocol: 'https' });
 
-const provider = new ethers.providers.InfuraProvider();
+// const provider = new ethers.providers.InfuraProvider();
+// const provider = new ethers.providers.JsonRpcProvider(`http://localhost:9545`);
+let provider;
+window.ethereum.enable().then(provider = new ethers.providers.Web3Provider(window.ethereum));
+const signer = provider.getSigner();
 
 const abi = [
   "function totalSupply() view returns (uint)",
   "function tokenByIndex(uint) view returns (uint)",
   "function tokenURI(uint) view returns (string)",
-  "function uri(uint) view returns (string)"
+  "function mint(address, string) returns (uint)"
 ];
 
-// const contract = new ethers.Contract("0x", abi, provider);
+const contract = new ethers.Contract("0x136B97394B0411E7D8cf0Dc167a259cBb4CBF971", abi, signer);
 
 const StyledSketchField = styled(SketchField)`
   border: 0.2rem #fff dashed;
@@ -51,7 +52,7 @@ const StyledSketchField = styled(SketchField)`
 `;
 
 const StyledButton = styled.button`
-  margin: 1rem 0.4rem;
+  margin: 0.6rem 0.4rem;
   border: solid 1px orange;
   border-radius: 1rem;
   padding: 0.6rem 1.4rem;
@@ -77,9 +78,12 @@ const MemeButton = styled.button`
 `;
 
 function App() {
-  const [imageUrl, setImageUrl] = useState('');
+  const [imageCID, setImageCID] = useState('');
+  const [metadataCID, setMetadataCID] = useState('');
   const [tool, setTool] = useState(Tools.Select);
   const [mintModal, setMintModal] = useState(false);
+  const [loadModal, setLoadModal] = useState(false);
+  const [saveModal, setSaveModal] = useState(false);
 
   const _sketch = useRef();
 
@@ -122,12 +126,15 @@ function App() {
     _sketch.current.removeSelected();
   }
 
-  const load = async () => {    
+  const toggleLoadModal = () => {
+    if (loadModal) {
+      setLoadModal(false)
+    } else {
+      setLoadModal(true)
+    }
+  }
 
-    // const url = "https://bafybeibfwqxsjs3xzn4txvxllghxevj6gmn3m6jrszpnyda6n5qdt3lidy.ipfs.dweb.link/image.gif";
-    // const url = "https://bafybeid5o4fkfgq62uvzuh24sgoo6jj2nir7ggk4o5rhwqb4sfr4wgbfku.ipfs.dweb.link/nft.jpg";
-
-    const url = "https://bafybeibhg2ik63dnkb3el4nlh5qry3lnhfok3nh3csywi6joedv25kh77i.ipfs.dweb.link/image.png";
+  const load = async (url) => {    
 
     const response = await axios.get(url, { responseType: 'blob' }); 
     const reader = new FileReader();
@@ -142,6 +149,17 @@ function App() {
           }); 
       });
     }
+
+    setLoadModal(false)
+
+  }
+
+  const toggleSaveModal = () => {
+    if (saveModal) {
+      setSaveModal(false)
+    } else {
+      setSaveModal(true)
+    }
   }
 
   const save = async () => {
@@ -149,20 +167,25 @@ function App() {
     reader.onloadend = async function () {
       const fileContents = `<svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%"><image width="100%" height="100%" href="${reader.result}" /></svg>`;
       const ipfsImg = await ipfs.add(fileContents);
-      setImageUrl(`ipfs://${ipfsImg}`);
+      setImageCID(ipfsImg);
 
       // TODO - load the title / description from fields (prepopulate from what's loaded)
       const metadata = `{ "name":"Flaunt", "description":"","image":"ipfs://${ipfsImg}" }`
 
       const ipfsMetadata = await ipfs.add(metadata);
-      
-      // TODO use this CID when minting
-      console.log(ipfsMetadata);
-      
+      setMetadataCID(ipfsMetadata);
+
+      toggleSaveModal()
     }
     const canvas = _sketch.current.toDataURL();
     const blob = await (await fetch(canvas)).blob();
     reader.readAsDataURL(blob);
+
+  }
+
+  const mintNFT = async () => {
+    const address = await signer.getAddress();
+    const tx = contract.mint(address, metadataCID)
   }
 
   const mint = () => {
@@ -173,8 +196,6 @@ function App() {
     }
   }
 
-
-
   return (
     <Switch>
       <Route path="/" exact>
@@ -182,7 +203,7 @@ function App() {
           <Navigation />
           <header className="App-header">
             <div>
-              <StyledButton onClick={() => load()}>load</StyledButton>
+              <StyledButton onClick={() => toggleLoadModal()}>load</StyledButton>
               <StyledButton onClick={() => save()}>save</StyledButton>
               <StyledButton onClick={() => mint()}>mint</StyledButton>
             </div>
@@ -196,7 +217,6 @@ function App() {
               <MemeButton onClick={() => text()}>text</MemeButton>
               <MemeButton onClick={() => pen()}>pen</MemeButton>
               <MemeButton onClick={() => remove()}>remove</MemeButton>
-              <span>{imageUrl}</span>
             </div>
             <StyledSketchField 
               width='640px' 
@@ -208,29 +228,68 @@ function App() {
               name='sketch'
               />
           </header>
-          <div
-            className={`modal ${ mintModal ? 'is-active' : ''}`}
-          >
+
+          <div className={`modal ${ loadModal ? 'is-active' : ''}`}>
             <div className="modal-background"></div>
             <div className="modal-content">
+            <header className="modal-card-head">
+              <p className="modal-card-title">Load</p>
+              <button className="delete" aria-label="close" onClick={()=> toggleLoadModal() }></button>
+            </header>
+            <section className="modal-card-body">
+              <h2>Load a sample image...</h2>
+              <img src={sample1} style={{width: "6rem", padding: "0.2rem"}} onClick={() => load('https://bafybeibhg2ik63dnkb3el4nlh5qry3lnhfok3nh3csywi6joedv25kh77i.ipfs.dweb.link/image.png')}  />
+              <img src={sample2} style={{width: "6rem", padding: "0.2rem"}} onClick={() => load('https://bafybeid5o4fkfgq62uvzuh24sgoo6jj2nir7ggk4o5rhwqb4sfr4wgbfku.ipfs.dweb.link/nft.jpg')} />
+              <img src={sample3} style={{width: "6rem", padding: "0.2rem"}} onClick={() => load('https://ipfsgateway.makersplace.com/ipfs/QmZ15eQX8FPjfrtdX3QYbrhZxJpbLpvDpsgb2p3VEH8Bqq')} />
+              <h2>Load from an existing NFT...</h2>
+              <div>
+                <button onClick={() => load()}>load from contract</button>
+              </div>
+            </section>
+            </div>
+          </div>
 
+          <div className={`modal ${ saveModal ? 'is-active' : ''}`}>
+            <div className="modal-background"></div>
+            <div className="modal-content">
+            <header className="modal-card-head">
+              <p className="modal-card-title">Saved</p>
+              <button className="delete" aria-label="close" onClick={()=> toggleSaveModal() }></button>
+            </header>
+            <section className="modal-card-body">
+              <p>Image CID: <a href={`ipfs://${imageCID}`} target="_blank">{`ipfs://${imageCID}`}</a></p>
+              <p>Metadata CID: <a href={`ipfs://${metadataCID}`} target="_blank">{`ipfs://${metadataCID}`}</a></p>
+              <p>Awesome, you're now ready to mint!</p>
+            </section>
+            </div>
+          </div>
+
+          <div className={`modal ${ mintModal ? 'is-active' : ''}`}>
+            <div className="modal-background"></div>
+            <div className="modal-content">
             <header className="modal-card-head">
               <p className="modal-card-title">Mint</p>
               <button className="delete" aria-label="close" onClick={()=>mint()}></button>
             </header>
             <section className="modal-card-body">
               <div>Select your network</div>
-              {imageUrl}
-
+              <button onClick={()=>mintNFT()}>Mint</button>
             </section>
             </div>
           </div>
+
         </div>
       </Route>
       <Route path="/gallery">
         <div className="App">
           <Navigation />
-          <Gallery />
+          <Gallery contract={contract} />
+        </div>
+      </Route>
+      <Route path="/about">
+        <div className="App">
+          <Navigation />
+          <About />
         </div>
       </Route>
     </Switch>
