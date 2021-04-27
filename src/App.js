@@ -44,19 +44,43 @@ const abi = [
   "function mint(address, string) returns (uint)"
 ];
 
-const contract = new ethers.Contract("0x136B97394B0411E7D8cf0Dc167a259cBb4CBF971", abi, signer);
+const contract = new ethers.Contract("0xe41eE07A9F41CD1Ab4e7F25A93321ba1Dc0Ec5b0", abi, signer);
 
 const StyledSketchField = styled(SketchField)`
-  border: 0.2rem #fff dashed;
-  background-color: #576071;
+  margin-top: 1rem;
+  box-shadow:
+    0 2.8px 2.2px rgba(0, 0, 0, 0.034),
+    0 6.7px 5.3px rgba(0, 0, 0, 0.048),
+    0 12.5px 10px rgba(0, 0, 0, 0.06),
+    0 22.3px 17.9px rgba(0, 0, 0, 0.072),
+    0 41.8px 33.4px rgba(0, 0, 0, 0.086),
+    0 100px 80px rgba(0, 0, 0, 0.12);
+  background-color: #e8e8e8;
+`;
+
+const StyledTextBox = styled.input`
+  width: 100%;
+  font-size: 1.6rem;
+  border: solid 1px #c1b6b6;
+  border-radius: 1rem;
+  padding: 0.4rem 0.8rem;
+  margin-bottom: 0.2rem;
 `;
 
 const StyledButton = styled.button`
   margin: 0.6rem 0.4rem;
-  border: solid 1px orange;
   border-radius: 1rem;
+  border: 0;
   padding: 0.6rem 1.4rem;
   font-size: 2rem;
+  font-family: 'courier';
+  box-shadow:
+    0 2.8px 2.2px rgba(0, 0, 0, 0.034),
+    0 6.7px 5.3px rgba(0, 0, 0, 0.048),
+    0 12.5px 10px rgba(0, 0, 0, 0.06),
+    0 22.3px 17.9px rgba(0, 0, 0, 0.072),
+    0 41.8px 33.4px rgba(0, 0, 0, 0.086),
+    0 100px 80px rgba(0, 0, 0, 0.12);
 
   :hover {
     background-color: orange;
@@ -65,16 +89,30 @@ const StyledButton = styled.button`
 `;
 
 const MemeButton = styled.button`
-  margin: 0 0.2rem 0.4rem 0.2rem;
-  border: solid 1px orange;
+  margin: 1rem 0.1rem 1rem 0.1rem;
+  border: 0;
   border-radius: 0.4rem;
   padding: 0.4rem 1rem;
   font-size: 1rem;
+  font-family: 'courier';
+  box-shadow:
+    0 2.8px 2.2px rgba(0, 0, 0, 0.034),
+    0 6.7px 5.3px rgba(0, 0, 0, 0.048),
+    0 12.5px 10px rgba(0, 0, 0, 0.06),
+    0 22.3px 17.9px rgba(0, 0, 0, 0.072),
+    0 41.8px 33.4px rgba(0, 0, 0, 0.086),
+    0 100px 80px rgba(0, 0, 0, 0.12);
 
   :hover {
     background-color: orange;
     color: white;
   }
+`;
+
+const ThumbImg = styled.img`
+  border-radius: 1rem;
+  width: 6rem;
+  padding: 0.2rem;
 `;
 
 function App() {
@@ -84,6 +122,8 @@ function App() {
   const [mintModal, setMintModal] = useState(false);
   const [loadModal, setLoadModal] = useState(false);
   const [saveModal, setSaveModal] = useState(false);
+  const [title, setTitle] = useState('nft name');
+  const [description, setDescription] = useState('nft description');
 
   const _sketch = useRef();
 
@@ -113,7 +153,7 @@ function App() {
   }
 
   const text = async () => {
-    _sketch.current.addText('SCALING', {
+    _sketch.current.addText('SCALING FTW', {
       "fontFamily": "Impact",
       "fill": "#fff",
       "stroke": "#000",
@@ -163,6 +203,10 @@ function App() {
   }
 
   const save = async () => {
+    toggleSaveModal()
+  }
+
+  const actuallySave = async () => {
     const reader = new FileReader()
     reader.onloadend = async function () {
       const fileContents = `<svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%"><image width="100%" height="100%" href="${reader.result}" /></svg>`;
@@ -170,17 +214,15 @@ function App() {
       setImageCID(ipfsImg);
 
       // TODO - load the title / description from fields (prepopulate from what's loaded)
-      const metadata = `{ "name":"Flaunt", "description":"","image":"ipfs://${ipfsImg}" }`
+      const metadata = `{ "name":"${title}", "description":"${description}","image":"ipfs://${ipfsImg}" }`
 
       const ipfsMetadata = await ipfs.add(metadata);
       setMetadataCID(ipfsMetadata);
 
-      toggleSaveModal()
     }
     const canvas = _sketch.current.toDataURL();
     const blob = await (await fetch(canvas)).blob();
     reader.readAsDataURL(blob);
-
   }
 
   const mintNFT = async () => {
@@ -204,7 +246,9 @@ function App() {
           <header className="App-header">
             <div>
               <StyledButton onClick={() => toggleLoadModal()}>load</StyledButton>
+              <span>&gt;</span>
               <StyledButton onClick={() => save()}>save</StyledButton>
+              <span>&gt;</span>
               <StyledButton onClick={() => mint()}>mint</StyledButton>
             </div>
             <div>
@@ -212,9 +256,9 @@ function App() {
               <MemeButton onClick={() => laserify()}>laserify</MemeButton>
               <MemeButton onClick={() => trollify()}>trollify</MemeButton>
               <MemeButton onClick={() => thugify()}>thugify</MemeButton>
-              |
-              <MemeButton onClick={() => select()}>select</MemeButton>
+              &nbsp;&nbsp;
               <MemeButton onClick={() => text()}>text</MemeButton>
+              <MemeButton onClick={() => select()}>select</MemeButton>
               <MemeButton onClick={() => pen()}>pen</MemeButton>
               <MemeButton onClick={() => remove()}>remove</MemeButton>
             </div>
@@ -233,18 +277,19 @@ function App() {
             <div className="modal-background"></div>
             <div className="modal-content">
             <header className="modal-card-head">
-              <p className="modal-card-title">Load</p>
+              <p className="modal-card-title">load</p>
               <button className="delete" aria-label="close" onClick={()=> toggleLoadModal() }></button>
             </header>
             <section className="modal-card-body">
-              <h2>Load a sample image...</h2>
-              <img src={sample1} style={{width: "6rem", padding: "0.2rem"}} onClick={() => load('https://bafybeibhg2ik63dnkb3el4nlh5qry3lnhfok3nh3csywi6joedv25kh77i.ipfs.dweb.link/image.png')}  />
-              <img src={sample2} style={{width: "6rem", padding: "0.2rem"}} onClick={() => load('https://bafybeid5o4fkfgq62uvzuh24sgoo6jj2nir7ggk4o5rhwqb4sfr4wgbfku.ipfs.dweb.link/nft.jpg')} />
-              <img src={sample3} style={{width: "6rem", padding: "0.2rem"}} onClick={() => load('https://ipfsgateway.makersplace.com/ipfs/QmZ15eQX8FPjfrtdX3QYbrhZxJpbLpvDpsgb2p3VEH8Bqq')} />
-              <h2>Load from an existing NFT...</h2>
+              <h2>load a sample nft asset...</h2>
+              <ThumbImg src={sample1} onClick={() => load('https://bafybeibhg2ik63dnkb3el4nlh5qry3lnhfok3nh3csywi6joedv25kh77i.ipfs.dweb.link/image.png')}  />
+              <ThumbImg src={sample2} onClick={() => load('https://bafybeid5o4fkfgq62uvzuh24sgoo6jj2nir7ggk4o5rhwqb4sfr4wgbfku.ipfs.dweb.link/nft.jpg')} />
+              <ThumbImg src={sample3} onClick={() => load('https://bafybeieyl2r3uorgpotq76p6w2dbpxl3m2qablgkjawyzn5htdzudb5s4y.ipfs.dweb.link/nft.jpg')} />
+              {/* <hr />
+              <h2>load from an existing NFT...</h2>
               <div>
-                <button onClick={() => load()}>load from contract</button>
-              </div>
+                <MemeButton onClick={() => load()}>load from contract</MemeButton>
+              </div> */}
             </section>
             <footer className="modal-card-foot">
             </footer>
@@ -255,13 +300,19 @@ function App() {
             <div className="modal-background"></div>
             <div className="modal-content">
             <header className="modal-card-head">
-              <p className="modal-card-title">Saved</p>
+              <p className="modal-card-title">save</p>
               <button className="delete" aria-label="close" onClick={()=> toggleSaveModal() }></button>
             </header>
             <section className="modal-card-body">
+              <StyledTextBox value={title} onChange={(e) => setTitle(e.currentTarget.value)} />
+              <br />
+              <StyledTextBox value={description} onChange={(e) => setDescription(e.currentTarget.value)} />
+              <br />
+              <MemeButton onClick={() => actuallySave()}>save to ipfs</MemeButton>
+              <hr />
               <p>Image CID: <a href={`ipfs://${imageCID}`} target="_blank">{`ipfs://${imageCID}`}</a></p>
               <p>Metadata CID: <a href={`ipfs://${metadataCID}`} target="_blank">{`ipfs://${metadataCID}`}</a></p>
-              <p>Awesome, you're now ready to mint!</p>
+              <p>{ metadataCID ? `done! you're now ready to mint!` : ``}</p>
             </section>
             <footer className="modal-card-foot">
             </footer>
@@ -272,12 +323,12 @@ function App() {
             <div className="modal-background"></div>
             <div className="modal-content">
             <header className="modal-card-head">
-              <p className="modal-card-title">Mint</p>
+              <p className="modal-card-title">mint</p>
               <button className="delete" aria-label="close" onClick={()=>mint()}></button>
             </header>
             <section className="modal-card-body">
-              <div></div>
-              <button onClick={()=>mintNFT()}>Mint to L1</button>
+              <p>mint directly to layer 1 (more expensive / immediately usable)</p>
+              <MemeButton onClick={()=>mintNFT()}>Mint to L1</MemeButton>
             </section>
             <footer className="modal-card-foot">
             </footer>

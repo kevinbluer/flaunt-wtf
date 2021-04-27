@@ -4,11 +4,26 @@ import { Button  } from 'react-bulma-components';
 
 const Gallery = ({contract}) => {
   const [assets, setAssets] = useState([])
+  const [totalSupply, setTotalSupply] = useState(0)
 
   const load = async () => {
-    const x = await contract.tokenURI(4);
-    console.log(x)
-    assets.push(x)
+    const totalSupplyNum = (await contract.totalSupply()).toNumber();
+
+    setTotalSupply(totalSupplyNum)
+
+    const items = [...Array(totalSupplyNum)].map(async (_, i) => {
+      const item = await contract.tokenURI(i+1)
+
+      // const metata = await fetch(item);
+
+      const newItem = (
+        <li key={i}>{item}</li>
+      );
+
+      setAssets((prev) => {
+        return [...prev, newItem];
+      });
+    });
   }
 
   useEffect(() => {
@@ -19,8 +34,10 @@ const Gallery = ({contract}) => {
     <div className="App">
       <h2>Gallery</h2>
       <header className="App-header">
-        newly minted goodness
-        {assets}
+        <p>all the meme-ified goodness ({totalSupply})</p>
+        <ul>
+          {assets}
+        </ul>
       </header>
     </div>
   )

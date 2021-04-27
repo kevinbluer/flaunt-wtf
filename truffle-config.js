@@ -1,3 +1,5 @@
+var path = require('path');
+
 module.exports = {
     networks: {
       development: {
@@ -10,6 +12,7 @@ module.exports = {
       solc: {
         version: "0.6.2",
       }
-    }
+    },
+    contracts_build_directory: path.join(__dirname, 'artifacts')
   }
   
