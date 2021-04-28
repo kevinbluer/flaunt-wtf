@@ -25,6 +25,7 @@ import troll from './Assets/troll.png';
 import sample1 from './Assets/sample-1.png';
 import sample2 from './Assets/sample-2.jpg';
 import sample3 from './Assets/sample-3.jpg';
+import sample4 from './Assets/sample-4.png';
 
 const fabric = require("fabric").fabric;
 
@@ -33,12 +34,12 @@ const ipfs = new IPFS({ host: 'ipfs.infura.io', port: 5001, protocol: 'https' })
 
 // const provider = new ethers.providers.InfuraProvider();
 // const provider = new ethers.providers.JsonRpcProvider(`http://localhost:9545`);
-let provider, signer;
+let l1Provider, l1Signer, l2Signer;
 let walletDetected = !!window.ethereum;
 
 try {
-  window.ethereum.enable().then(provider = new ethers.providers.Web3Provider(window.ethereum));
-  signer = provider.getSigner();
+  window.ethereum.enable().then(l1Provider = new ethers.providers.Web3Provider(window.ethereum));
+  l1Signer = l1Provider.getSigner();
 } catch (err) {
   // TODO
 }
@@ -50,7 +51,7 @@ const abi = [
   "function mint(address, string) returns (uint)"
 ];
 
-const contract = new ethers.Contract("0x6cA2F11a43b2B8f4DCE7De62f8Dc03f8E12BC48F", abi, signer);
+const contract = new ethers.Contract("0x6cA2F11a43b2B8f4DCE7De62f8Dc03f8E12BC48F", abi, l1Signer);
 
 const StyledSketchField = styled(SketchField)`
   margin-top: 1rem;
@@ -74,6 +75,7 @@ const StyledTextBox = styled.input`
 `;
 
 const StyledButton = styled.button`
+  cursor: pointer;
   margin: 0.6rem 0.4rem;
   border-radius: 1rem;
   border: 0;
@@ -95,6 +97,7 @@ const StyledButton = styled.button`
 `;
 
 const MemeButton = styled.button`
+  cursor: pointer;
   margin: 1rem 0.1rem 1rem 0.1rem;
   border: 0;
   border-radius: 0.4rem;
@@ -233,7 +236,7 @@ function App() {
   }
 
   const mintNFT = async () => {
-    const address = await signer.getAddress();
+    const address = await l1Signer.getAddress();
     const tx = contract.mint(address, metadataCID)
   }
 
@@ -263,8 +266,8 @@ function App() {
               <MemeButton onClick={() => laserify()}>laserify</MemeButton>
               <MemeButton onClick={() => trollify()}>trollify</MemeButton>
               <MemeButton onClick={() => thugify()}>thugify</MemeButton>
+              <MemeButton onClick={() => text()}>textify</MemeButton>
               &nbsp;&nbsp;
-              <MemeButton onClick={() => text()}>text</MemeButton>
               <MemeButton onClick={() => select()}>select</MemeButton>
               <MemeButton onClick={() => pen()}>pen</MemeButton>
               <MemeButton onClick={() => remove()}>remove</MemeButton>
@@ -292,6 +295,8 @@ function App() {
               <ThumbImg src={sample1} onClick={() => load('https://bafybeibhg2ik63dnkb3el4nlh5qry3lnhfok3nh3csywi6joedv25kh77i.ipfs.dweb.link/image.png')}  />
               <ThumbImg src={sample2} onClick={() => load('https://bafybeid5o4fkfgq62uvzuh24sgoo6jj2nir7ggk4o5rhwqb4sfr4wgbfku.ipfs.dweb.link/nft.jpg')} />
               <ThumbImg src={sample3} onClick={() => load('https://bafybeieyl2r3uorgpotq76p6w2dbpxl3m2qablgkjawyzn5htdzudb5s4y.ipfs.dweb.link/nft.jpg')} />
+              <ThumbImg src={sample4} onClick={() => load('https://ipfs.io/ipfs/Qme9DzDKpwoY5JGXs6d9YwPrN5u6VbSgf31LC2YNfUX5hu/nft.png')} />
+             
               {/* <hr />
               <h2>load from an existing NFT...</h2>
               <div>
