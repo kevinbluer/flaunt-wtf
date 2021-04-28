@@ -50,7 +50,7 @@ const abi = [
   "function mint(address, string) returns (uint)"
 ];
 
-const contract = new ethers.Contract("0xe41eE07A9F41CD1Ab4e7F25A93321ba1Dc0Ec5b0", abi, signer);
+const contract = new ethers.Contract("0x6cA2F11a43b2B8f4DCE7De62f8Dc03f8E12BC48F", abi, signer);
 
 const StyledSketchField = styled(SketchField)`
   margin-top: 1rem;

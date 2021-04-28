@@ -7,6 +7,7 @@ const Gallery = ({contract, walletDetected}) => {
   const [totalSupply, setTotalSupply] = useState(0)
 
   const load = async () => {
+    debugger;
     const totalSupplyNum = (await contract.totalSupply()).toNumber();
 
     setTotalSupply(totalSupplyNum)
