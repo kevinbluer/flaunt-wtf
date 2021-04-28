@@ -2,8 +2,7 @@ const wrapProvider = require('arb-ethers-web3-bridge').wrapProvider
 const HDWalletProvider = require('@truffle/hdwallet-provider')
 
 const mnemonic =
-  'jar deny prosper gasp flush glass core corn alarm treat leg smart'
-const arbProviderUrl = 'https://kovan4.arbitrum.io/rpc'
+  'surge ability together fruit retire harvest release turkey social coffee owner uphold panel group car'
 // const chainId = 212984383488152;
 
 var path = require('path');
@@ -15,18 +14,22 @@ module.exports = {
        port: 8545,
        network_id: "*"
       },
-      arbitrum: {
+      arbitrumRemote: {
         provider: function () {
           return wrapProvider(
             new HDWalletProvider({
               mnemonic: {
                 phrase: mnemonic
               },
-              providerOrUrl: arbProviderUrl
+              numberOfAddresses: 1,
+              providerOrUrl: 'https://kovan4.arbitrum.io/rpc',
+              shareNonce: true,
+              derivationPath: "m/44'/1'/0'/0/",
+              chainId: "212984383488152"
             })
           )
         },
-        network_id: '*',
+        network_id: '*', // Match any network id
         gasPrice: 0,
       },
     },
