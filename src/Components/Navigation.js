@@ -1,3 +1,5 @@
+import { useState } from "react";
+
 import { Navbar, Section } from 'react-bulma-components';
 import styled from 'styled-components';
 
@@ -12,9 +14,11 @@ const StyledLink = styled(Link)`
 `;
 
 const Navigation = () => {
+  const [navIsActive, setNavIsActive] = useState(false);
+
   return (
       <Navbar
-        active={true}
+        active={navIsActive}
         transparent={true}
         style={{background: "none"}}
       >
@@ -24,7 +28,7 @@ const Navigation = () => {
               <img src={troll} alt="Flaunt" />
             </Link>
           </Navbar.Item>
-          <Navbar.Burger />
+          <Navbar.Burger onClick={() => setNavIsActive(navIsActive ? false : true) }/>
         </Navbar.Brand>
         <Navbar.Menu>
           <Navbar.Container>
