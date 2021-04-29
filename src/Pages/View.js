@@ -47,6 +47,8 @@ const Gallery = ({contract, walletDetected}) => {
     
     const metadataUri = await contract.tokenURI(id)
 
+    console.log(metadataUri)
+
     const santizedMetadataUri = sanitize(metadataUri)
     const res = await fetch(santizedMetadataUri);
     const metadata = await res.json();
@@ -59,9 +61,9 @@ const Gallery = ({contract, walletDetected}) => {
   }
 
   useEffect(() => {
-    if (walletDetected) {
+    // if (walletDetected) {
       load()
-    }
+    // }
   }, [])
 
   return (

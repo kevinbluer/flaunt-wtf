@@ -34,13 +34,18 @@ const IPFS = require('ipfs-mini');
 const ipfs = new IPFS({ host: 'ipfs.infura.io', port: 5001, protocol: 'https' });
 
 // const provider = new ethers.providers.InfuraProvider();
-// const provider = new ethers.providers.JsonRpcProvider(`http://localhost:9545`);
+
 let l1Provider, l1Signer, l2Signer;
 let walletDetected = !!window.ethereum;
 
 try {
-  window.ethereum.enable().then(l1Provider = new ethers.providers.Web3Provider(window.ethereum));
-  l1Signer = l1Provider.getSigner();
+  if (window.ethereum) {
+    window.ethereum.enable().then(l1Provider = new ethers.providers.Web3Provider(window.ethereum));
+    l1Signer = l1Provider.getSigner();
+  } else {
+    l1Provider = ethers.getDefaultProvider('kovan');
+  }
+    
 } catch (err) {
   console.log(err);
 }
@@ -137,7 +142,7 @@ function App() {
   const [description, setDescription] = useState('');
   const [isValidL1, setIsValidL1] = useState();
 
-  const contract = new ethers.Contract("0xe41eE07A9F41CD1Ab4e7F25A93321ba1Dc0Ec5b0", abi, l1Signer);
+  const contract = new ethers.Contract("0xe41eE07A9F41CD1Ab4e7F25A93321ba1Dc0Ec5b0", abi, l1Signer || l1Provider);
 
   const checkNetworks = async () => {
     if (l1Provider) {
@@ -256,9 +261,8 @@ function App() {
     const address = await l1Signer.getAddress();
     const tx = await contract.mint(address, metadataCID);
     setMintStatus('transaction sent!');
-    const x = await tx.wait();
-    console.log(x);
-    setMintStatus('niiiice');
+    await tx.wait();
+    setMintStatus('minted! head to the gallery to check it out');
   }
 
   const mint = () => {

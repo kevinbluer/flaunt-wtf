@@ -1,7 +1,7 @@
 const wrapProvider = require('arb-ethers-web3-bridge').wrapProvider
 const HDWalletProvider = require('@truffle/hdwallet-provider')
 
-const mnemonic = ''
+const mnemonic = 'educate tip prize lawsuit dilemma meadow segment pitch odor unfold nasty destroy'
 
 var path = require('path');
 

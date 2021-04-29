@@ -11,6 +11,7 @@ const Gallery = ({contract, walletDetected}) => {
   const [totalSupply, setTotalSupply] = useState(0)
 
   const load = async () => {
+    console.log(contract)
     const totalSupplyNum = (await contract.totalSupply()).toNumber();
 
     setTotalSupply(totalSupplyNum)
@@ -36,9 +37,9 @@ const Gallery = ({contract, walletDetected}) => {
   }
 
   useEffect(() => {
-    if (walletDetected) {
+    // if (walletDetected) {
       load()
-    }
+    // }
   }, [])
   
   return (
