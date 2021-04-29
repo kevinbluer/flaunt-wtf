@@ -1,9 +1,7 @@
 const wrapProvider = require('arb-ethers-web3-bridge').wrapProvider
 const HDWalletProvider = require('@truffle/hdwallet-provider')
 
-const mnemonic =
-  'surge ability together fruit retire harvest release turkey social coffee owner uphold panel group car'
-// const chainId = 212984383488152;
+const mnemonic = ''
 
 var path = require('path');
 
@@ -13,6 +11,17 @@ module.exports = {
        host: "127.0.0.1",
        port: 8545,
        network_id: "*"
+      },
+      kovan: {
+        provider: () => new HDWalletProvider({
+          mnemonic: {
+            phrase: mnemonic
+          },
+          providerOrUrl: `https://kovan.infura.io/v3/efc89509a2c24e41bb674076b0751fbd`,
+          chainId: "42"
+        }),
+        network_id: "42",
+        gas: 5500000
       },
       arbitrumRemote: {
         provider: function () {

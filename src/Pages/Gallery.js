@@ -1,5 +1,9 @@
 import React, { useState, useEffect } from "react";
 
+import {
+  Link
+} from "react-router-dom";
+
 import { Button  } from 'react-bulma-components';
 
 const Gallery = ({contract, walletDetected}) => {
@@ -7,18 +11,22 @@ const Gallery = ({contract, walletDetected}) => {
   const [totalSupply, setTotalSupply] = useState(0)
 
   const load = async () => {
-    debugger;
     const totalSupplyNum = (await contract.totalSupply()).toNumber();
 
     setTotalSupply(totalSupplyNum)
 
     const items = [...Array(totalSupplyNum)].map(async (_, i) => {
-      const item = await contract.tokenURI(i+1)
+      const id = i+1;
+      const item = await contract.tokenURI(id)
 
       // const metata = await fetch(item);
 
       const newItem = (
-        <li key={i}>{item}</li>
+        <li key={i}>
+          <Link to={`/v/${id}`}>
+            {`${item} (${id})`}
+          </Link>
+        </li>
       );
 
       setAssets((prev) => {

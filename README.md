@@ -27,12 +27,19 @@ Start the front-end.
 yarn start
 ```
 
+## Networks
+
+### Layer 1
+
+- Kovan: 0xe41eE07A9F41CD1Ab4e7F25A93321ba1Dc0Ec5b0
+
 ## Libraries
 
 - [ethers](https://docs.ethers.io/v5/)
 - [ipfs-mini](https://github.com/silentcicero/ipfs-mini)
 - [react-sketch](https://github.com/tbolis/react-sketch)
 - [react-router](https://reactrouter.com/)
+- [react-svg](https://www.npmjs.com/package/react-svg)
 - [react-bulma-components](https://www.npmjs.com/package/react-bulma-components)
 - [openzeppelin-contracts](https://github.com/OpenZeppelin/openzeppelin-contracts)
 
@@ -51,4 +58,4 @@ yarn start
 - [ ] Ability to generate the derivative (new) NFT on an L2
 - [ ] Ability to move asset back to L1 via bridge
 - [x] Ability to view what other people have created, etc (should be just incrementing the ids)
-- [ ] Ability to flaunt.wtf via a custom route for each asset
+- [x] Ability to flaunt.wtf via a custom route for each asset

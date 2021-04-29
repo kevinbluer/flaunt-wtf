@@ -1,6 +1,6 @@
 import './App.css';
 
-import React, { useRef, useState } from "react";
+import React, { useRef, useState, useEffect } from "react";
 
 import axios from 'axios';
 import styled from 'styled-components';
@@ -15,6 +15,7 @@ import {
 import Navigation from "./Components/Navigation";
 import Gallery from "./Pages/Gallery";
 import About from "./Pages/About";
+import View from "./Pages/View";
 
 import eyes from './Assets/eyes.png';
 import shades from './Assets/shades.png';
@@ -41,7 +42,7 @@ try {
   window.ethereum.enable().then(l1Provider = new ethers.providers.Web3Provider(window.ethereum));
   l1Signer = l1Provider.getSigner();
 } catch (err) {
-  // TODO
+  console.log(err);
 }
 
 const abi = [
@@ -50,8 +51,6 @@ const abi = [
   "function tokenURI(uint) view returns (string)",
   "function mint(address, string) returns (uint)"
 ];
-
-const contract = new ethers.Contract("0x6cA2F11a43b2B8f4DCE7De62f8Dc03f8E12BC48F", abi, l1Signer);
 
 const StyledSketchField = styled(SketchField)`
   margin-top: 1rem;
@@ -72,6 +71,7 @@ const StyledTextBox = styled.input`
   border-radius: 1rem;
   padding: 0.4rem 0.8rem;
   margin-bottom: 0.2rem;
+  font-family: 'courier';
 `;
 
 const StyledButton = styled.button`
@@ -129,11 +129,27 @@ function App() {
   const [imageCID, setImageCID] = useState('');
   const [metadataCID, setMetadataCID] = useState('');
   const [tool, setTool] = useState(Tools.Select);
+  const [mintStatus, setMintStatus] = useState(false);
   const [mintModal, setMintModal] = useState(false);
   const [loadModal, setLoadModal] = useState(false);
   const [saveModal, setSaveModal] = useState(false);
-  const [title, setTitle] = useState('nft name');
-  const [description, setDescription] = useState('nft description');
+  const [title, setTitle] = useState('');
+  const [description, setDescription] = useState('');
+  const [isValidL1, setIsValidL1] = useState();
+
+  const contract = new ethers.Contract("0xe41eE07A9F41CD1Ab4e7F25A93321ba1Dc0Ec5b0", abi, l1Signer);
+
+  const checkNetworks = async () => {
+    if (l1Provider) {
+      const network = await l1Provider.getNetwork();
+      if ([42, 1337].includes(network.chainId)) {
+        setIsValidL1(true)
+      }
+    } else {
+      setIsValidL1(false)
+    }
+
+  }
 
   const _sketch = useRef();
 
@@ -236,8 +252,13 @@ function App() {
   }
 
   const mintNFT = async () => {
+    setMintStatus('minting...')
     const address = await l1Signer.getAddress();
-    const tx = contract.mint(address, metadataCID)
+    const tx = await contract.mint(address, metadataCID);
+    setMintStatus('transaction sent!');
+    const x = await tx.wait();
+    console.log(x);
+    setMintStatus('niiiice');
   }
 
   const mint = () => {
@@ -248,11 +269,18 @@ function App() {
     }
   }
 
+  useEffect(() => {
+    checkNetworks()
+  },[])
+
   return (
     <Switch>
       <Route path="/" exact>
         <div className="App">
           <Navigation />
+          { 
+            !isValidL1 ? (<div>unable to detect valid network</div>) : <></>
+          }
           <header className="App-header">
             <div>
               <StyledButton onClick={() => toggleLoadModal()}>load</StyledButton>
@@ -316,15 +344,20 @@ function App() {
               <button className="delete" aria-label="close" onClick={()=> toggleSaveModal() }></button>
             </header>
             <section className="modal-card-body">
-              <StyledTextBox value={title} onChange={(e) => setTitle(e.currentTarget.value)} />
+              <StyledTextBox value={title} placeholder={`nft name`} onChange={(e) => setTitle(e.currentTarget.value)} />
               <br />
-              <StyledTextBox value={description} onChange={(e) => setDescription(e.currentTarget.value)} />
+              <StyledTextBox value={description} placeholder={`nft description`} onChange={(e) => setDescription(e.currentTarget.value)} />
               <br />
               <MemeButton onClick={() => actuallySave()}>save to ipfs</MemeButton>
               <hr />
               <p>Image CID: <a href={`ipfs://${imageCID}`} target="_blank">{`ipfs://${imageCID}`}</a></p>
               <p>Metadata CID: <a href={`ipfs://${metadataCID}`} target="_blank">{`ipfs://${metadataCID}`}</a></p>
               <p>{ metadataCID ? `done! you're now ready to mint!` : ``}</p>
+              <hr />
+              <p>once your assets have been saved, we recommend preserving</p>
+              <MemeButton>preserve with filecoin</MemeButton>
+              &nbsp;
+              <MemeButton>preserve with pinanta</MemeButton>
             </section>
             <footer className="modal-card-foot">
             </footer>
@@ -340,7 +373,11 @@ function App() {
             </header>
             <section className="modal-card-body">
               <p>mint directly to layer 1 (more expensive / immediately usable)</p>
-              <MemeButton onClick={()=>mintNFT()}>Mint to L1</MemeButton>
+              <MemeButton onClick={()=>mintNFT()}>mint to L1</MemeButton>
+              <p>{mintStatus}</p>
+              {/* <hr />
+              <p>mint to layer 2 (significant cheaper / delay in usability)</p>
+              <MemeButton onClick={()=>mintNFT()}>mint to arbitrum</MemeButton> */}
             </section>
             <footer className="modal-card-foot">
             </footer>
@@ -359,6 +396,12 @@ function App() {
         <div className="App">
           <Navigation />
           <About />
+        </div>
+      </Route>
+      <Route path="/v/:id">
+        <div className="App">
+          <Navigation />
+          <View contract={contract} walletDetected={walletDetected} />
         </div>
       </Route>
     </Switch>
