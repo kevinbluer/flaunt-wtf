@@ -283,7 +283,7 @@ function App() {
         <div className="App">
           <Navigation />
           { 
-            !isValidL1 ? (<div>unable to detect valid network</div>) : <></>
+            !isValidL1 ? (<div>unable to detect valid network. please connect to the kovan l1 testnet</div>) : <></>
           }
           <header className="App-header">
             <div>
