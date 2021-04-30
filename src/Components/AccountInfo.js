@@ -49,12 +49,10 @@ async function withdrawEthToArbitrum(){
   }
 }
 
-
 async function refreshBalances(){
   await balances.update()
   toast.success("Balance refreshed successfully");
 }
-
 
  return (
     <div>
@@ -70,40 +68,35 @@ async function refreshBalances(){
         />
         <div className="container">
         <div style={{ display: "flex", flexDirection: "column", width: "100%", justifyContent: "center", alignItems: "center", margin: 20 }}>
-            <div style={{margin:20}}>
-              Wallet address: <i>{walletAddress}</i>
-            </div>
-            <div style={{margin:20}}>
-              Eth chain Balance: <i>{(utils.formatEther(balances.eth.balance)) || 0}</i>
-            </div>
-            <div style={{margin:20}}>
-              Arb chain Balance: <i>{(utils.formatEther(balances.eth.arbChainBalance)) || 0}</i>
-            </div>
-            <hr/>
-            <span>Private key:</span>
-            <div style={{margin:20, maxWidth: 900, wordWrap: "break-word"}}>
-               <span style={{margin: 20}}>{(privKey)}</span>
-            </div>
-
-
-
-        </div>
-        <div>
-        <button onClick={depositEthToArbitrum}>
-                Deposit eth to arbitrum chain
+          <div style={{margin:20}}>
+            Wallet address: <i>{walletAddress}</i>
+          </div>
+          <div>
+            Eth chain Balance: <i>{(utils.formatEther(balances.eth.balance)) || 0}</i>
+          </div>
+          <div>
+            Arb chain Balance: <i>{(utils.formatEther(balances.eth.arbChainBalance)) || 0}</i>
+          </div>
+          <hr/>
+        <span>Private key:</span>
+          <div style={{maxWidth: 900, wordWrap: "break-word"}}>
+              <span style={{margin: 20}}>{(privKey)}</span>
+          </div>
+          </div>
+          <div>
+            <button onClick={depositEthToArbitrum}>
+                deposit eth to arbitrum chain
             </button>
-
             <button onClick={withdrawEthToArbitrum}>
-                Withdraw eth from arbitrum
+                withdraw eth from arbitrum
             </button>
-
             <button onClick={refreshBalances}>
-                Refresh balances
+                refresh balances
             </button>
           </div>
         </div>
 
-          Withdrawals from l2(arbitrum) to l1(ethereum) takes 24 hours roughly on kovan4 testnet.
+        withdrawals from l2(arbitrum) to l1(ethereum) takes 24 hours roughly on kovan4 testnet.
   </div>
  )
 }

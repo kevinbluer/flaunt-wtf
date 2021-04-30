@@ -274,6 +274,32 @@ function App() {
     }
   }
 
+  const storageDeal = async () => {
+    console.log(metadataCID)
+    const metadataDeal = {
+      jsonrpc:"2.0",
+      id:0,
+      method:"Filecoin.ClientStartDeal",
+      params:[
+        {Data:{
+          TransferType:"graphsync",
+          Root:
+            {"/":metadataCID},
+          PieceCid:null,
+          PieceSize:0},
+          Wallet: "t3r3yrbujjmmjdixnnaab35ioi7ntpnlrt4bmsrtw4j5d6kjb2eeyu7axr2zv2g5m5emby6mzn6rvqjwzbfrya",
+          Miner: "t01000",
+          EpochPrice: 2500,
+          MinBlocksDuration: 300
+        }]
+      };
+    const res = await axios.post(
+      'http://localhost:7777/rpc/v0',
+      metadataDeal
+    )
+    console.log(res)
+  }
+
   useEffect(() => {
     checkNetworks()
   },[])
@@ -359,10 +385,11 @@ function App() {
               <p>Metadata CID: <a href={`ipfs://${metadataCID}`} target="_blank">{`ipfs://${metadataCID}`}</a></p>
               <p>{ metadataCID ? `done! you're now ready to mint!` : ``}</p>
               <hr />
-              <p>once your assets have been saved, we recommend preserving</p>
-              <MemeButton>preserve with filecoin</MemeButton>
+              <p>once your assets have been saved, it's highly recommended to preserve with a storage deal or pinning service</p>
+              <MemeButton onClick={() => storageDeal()}>preserve with filecoin</MemeButton>
               &nbsp;
-              <MemeButton>preserve with pinanta</MemeButton>
+              <MemeButton><a href="http://pinata.cloud/" target="_blank" style={{"color": "#000"}}>preserve with pinata</a></MemeButton>
+              <p>note that a filecoin requires a locally running lotus node</p>
             </section>
             <footer className="modal-card-foot">
             </footer>
