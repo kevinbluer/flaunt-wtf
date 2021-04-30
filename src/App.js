@@ -16,6 +16,7 @@ import Navigation from "./Components/Navigation";
 import Gallery from "./Pages/Gallery";
 import About from "./Pages/About";
 import View from "./Pages/View";
+import NotFound from './Pages/NotFound';
 
 import eyes from './Assets/eyes.png';
 import shades from './Assets/shades.png';
@@ -406,6 +407,12 @@ function App() {
         <div className="App">
           <Navigation />
           <View contract={contract} walletDetected={walletDetected} />
+        </div>
+      </Route>
+      <Route component={NotFound}>
+        <div className="App">
+          <Navigation />
+          <NotFound />
         </div>
       </Route>
     </Switch>
