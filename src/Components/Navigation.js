@@ -5,6 +5,8 @@ import styled from 'styled-components';
 
 import troll from "../Assets/troll.png"
 
+import Login from "./Torus"
+
 import {
   Link
 } from "react-router-dom";
@@ -46,6 +48,11 @@ const Navigation = () => {
               <StyledLink to="/about">
                 about
               </StyledLink>
+            </Navbar.Item>
+          </Navbar.Container>
+          <Navbar.Container align="end">
+            <Navbar.Item href="#">
+              <Login />
             </Navbar.Item>
           </Navbar.Container>
         </Navbar.Menu>
