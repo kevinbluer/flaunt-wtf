@@ -28,6 +28,7 @@ import sample1 from './Assets/sample-1.png';
 import sample2 from './Assets/sample-2.jpg';
 import sample3 from './Assets/sample-3.jpg';
 import sample4 from './Assets/sample-4.png';
+import sample5 from './Assets/sample-5.png';
 
 const fabric = require("fabric").fabric;
 
@@ -136,7 +137,7 @@ function App() {
   const [imageCID, setImageCID] = useState('');
   const [metadataCID, setMetadataCID] = useState('');
   const [importAddress, setImportAddress] = useState('0x3B3ee1931Dc30C1957379FAc9aba94D1C48a5405');
-  const [importId, setImportId] = useState(Math.floor(Math.random() * 24437)); // 24437, 12345, 11155, 1265, 175, 17367
+  const [importId, setImportId] = useState(Math.floor(Math.random() * 24437)); // 24437, 12345, 11155, 1265, 175, 17367, 17618 :)))
   const [tool, setTool] = useState(Tools.Select);
   const [mintStatus, setMintStatus] = useState(false);
   const [mintModal, setMintModal] = useState(false);
@@ -216,13 +217,13 @@ function App() {
     const cidV0 = x.split('/')[0];
     const cidV1 = new ipfsClient.CID(cidV0).toV1();
     const sanitized = `https://${cidV1}.ipfs.dweb.link/${x.split('/')[1]}`;
-    console.log(sanitized);
     return sanitized;
   }
 
   const loadImage = async (url) => {
     if (url.indexOf('mp4') > -1) {
-      alert('unable to load videos')
+      alert('unable to load videos');
+      setLoadModal(true)
       return;
     }
 
@@ -249,13 +250,14 @@ function App() {
     const metadata = await metadataRes.json();
     const santizedMetadataUri = sanitize(metadata.image)
 
+    console.log(santizedMetadataUri) 
     loadImage(santizedMetadataUri)
     setLoadModal(false)
   }
 
 
 
-  const load = async (url) => {    
+  const load = async (url) => {   
     loadImage(url)
     setLoadModal(false)
   }
@@ -309,7 +311,6 @@ function App() {
   }
 
   const storageDeal = async () => {
-    console.log(metadataCID)
     const metadataDeal = {
       jsonrpc:"2.0",
       id:0,
@@ -421,9 +422,9 @@ function App() {
               <h2>load a sample nft asset...</h2>
               <ThumbImg src={sample1} onClick={() => load('https://bafybeibhg2ik63dnkb3el4nlh5qry3lnhfok3nh3csywi6joedv25kh77i.ipfs.dweb.link/image.png')}  />
               <ThumbImg src={sample2} onClick={() => load('https://bafybeid5o4fkfgq62uvzuh24sgoo6jj2nir7ggk4o5rhwqb4sfr4wgbfku.ipfs.dweb.link/nft.jpg')} />
+              <ThumbImg src={sample5} onClick={() => load('https://bafybeifwsqojqrrtjsqcago3s6f5crkcra56ml6kti5ljxf74jceibca6e.ipfs.dweb.link/nft.jpg')} />
               <ThumbImg src={sample3} onClick={() => load('https://bafybeieyl2r3uorgpotq76p6w2dbpxl3m2qablgkjawyzn5htdzudb5s4y.ipfs.dweb.link/nft.jpg')} />
               <ThumbImg src={sample4} onClick={() => load('https://ipfs.io/ipfs/Qme9DzDKpwoY5JGXs6d9YwPrN5u6VbSgf31LC2YNfUX5hu/nft.png')} />
-            
               <hr />
               <h2>load from an existing NFT, e.g.</h2>
               <StyledTextBox value={importAddress} placeholder={`contract address`} onChange={(e) => setImportAddress(e.currentTarget.value)} />
