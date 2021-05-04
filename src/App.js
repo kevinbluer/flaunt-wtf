@@ -33,6 +33,7 @@ const fabric = require("fabric").fabric;
 
 const IPFS = require('ipfs-mini');
 const ipfs = new IPFS({ host: 'ipfs.infura.io', port: 5001, protocol: 'https' });
+const ipfsClient = require("ipfs-http-client");
 
 // const provider = new ethers.providers.InfuraProvider();
 
@@ -134,6 +135,8 @@ const ThumbImg = styled.img`
 function App() {
   const [imageCID, setImageCID] = useState('');
   const [metadataCID, setMetadataCID] = useState('');
+  const [importAddress, setImportAddress] = useState('0x3B3ee1931Dc30C1957379FAc9aba94D1C48a5405');
+  const [importId, setImportId] = useState(Math.floor(Math.random() * 24437)); // 24437, 12345, 11155, 1265, 175, 17367
   const [tool, setTool] = useState(Tools.Select);
   const [mintStatus, setMintStatus] = useState(false);
   const [mintModal, setMintModal] = useState(false);
@@ -144,11 +147,12 @@ function App() {
   const [isValidL1, setIsValidL1] = useState();
 
   const contract = new ethers.Contract("0xe41eE07A9F41CD1Ab4e7F25A93321ba1Dc0Ec5b0", abi, l1Signer || l1Provider);
+  const infuraProvider = new ethers.providers.InfuraProvider();
 
   const checkNetworks = async () => {
     if (l1Provider) {
       const network = await l1Provider.getNetwork();
-      if ([42, 1337].includes(network.chainId)) {
+      if ([42, 1337, 344435, 801984078892471].includes(network.chainId)) {
         setIsValidL1(true)
       }
     } else {
@@ -206,7 +210,21 @@ function App() {
     }
   }
 
-  const load = async (url) => {    
+  const sanitize = (url) => {
+    // hacks all the way down
+    const x = url.replace('ipfs/', '').replace('ipfs://', '');
+    const cidV0 = x.split('/')[0];
+    const cidV1 = new ipfsClient.CID(cidV0).toV1();
+    const sanitized = `https://${cidV1}.ipfs.dweb.link/${x.split('/')[1]}`;
+    console.log(sanitized);
+    return sanitized;
+  }
+
+  const loadImage = async (url) => {
+    if (url.indexOf('mp4') > -1) {
+      alert('unable to load videos')
+      return;
+    }
 
     const response = await axios.get(url, { responseType: 'blob' }); 
     const reader = new FileReader();
@@ -221,9 +239,25 @@ function App() {
           }); 
       });
     }
+  }
 
+  const loadExistingNFT = async () => {
+    // debugger;
+    const contract = new ethers.Contract(importAddress, abi, infuraProvider);
+    const metadataUri = await contract.tokenURI(importId);
+    const metadataRes = await fetch(metadataUri);
+    const metadata = await metadataRes.json();
+    const santizedMetadataUri = sanitize(metadata.image)
+
+    loadImage(santizedMetadataUri)
     setLoadModal(false)
+  }
 
+
+
+  const load = async (url) => {    
+    loadImage(url)
+    setLoadModal(false)
   }
 
   const toggleSaveModal = () => {
@@ -300,6 +334,40 @@ function App() {
     console.log(res)
   }
 
+  const switchToSKALE = async () => {
+    let params = {
+      chainId: "0x54173", //decodes to 344435
+      chainName: "SKALE Network Testnet",
+      rpcUrls: ["https://dev-testnet-v1-0.skalelabs.com"],
+      nativeCurrency: {
+        name: "SKALE ETH",
+        symbol: "skETH",
+        decimals: 18
+      },
+      blockExplorerUrls: [
+        "https://expedition.dev/?rpcUrl=https://dev-testnet-v1-0.skalelabs.com"
+      ]
+    };
+
+    const address = await l1Signer.getAddress();
+
+    //request change to SKALE Network
+    window.ethereum
+      .request({
+        method: "wallet_addEthereumChain",
+        params: [params, address]
+      })
+      .catch((error) => console.log(error.message));
+  }
+
+  const randomize = () => {
+    setImportId(Math.floor(Math.random() * 24437));
+  }
+
+  const mintToSKALE = () => {
+
+  }
+
   useEffect(() => {
     checkNetworks()
   },[])
@@ -355,12 +423,18 @@ function App() {
               <ThumbImg src={sample2} onClick={() => load('https://bafybeid5o4fkfgq62uvzuh24sgoo6jj2nir7ggk4o5rhwqb4sfr4wgbfku.ipfs.dweb.link/nft.jpg')} />
               <ThumbImg src={sample3} onClick={() => load('https://bafybeieyl2r3uorgpotq76p6w2dbpxl3m2qablgkjawyzn5htdzudb5s4y.ipfs.dweb.link/nft.jpg')} />
               <ThumbImg src={sample4} onClick={() => load('https://ipfs.io/ipfs/Qme9DzDKpwoY5JGXs6d9YwPrN5u6VbSgf31LC2YNfUX5hu/nft.png')} />
-             
-              {/* <hr />
-              <h2>load from an existing NFT...</h2>
+            
+              <hr />
+              <h2>load from an existing NFT, e.g.</h2>
+              <StyledTextBox value={importAddress} placeholder={`contract address`} onChange={(e) => setImportAddress(e.currentTarget.value)} />
+              <br />
+              <StyledTextBox value={importId} placeholder={`id`} onChange={(e) => setImportId(e.currentTarget.value)} />
+              <br />
               <div>
-                <MemeButton onClick={() => load()}>load from contract</MemeButton>
-              </div> */}
+                <MemeButton onClick={() => randomize()}>randomize</MemeButton>
+                &nbsp;
+                <MemeButton onClick={() => loadExistingNFT()}>load from contract</MemeButton>
+              </div>
             </section>
             <footer className="modal-card-foot">
             </footer>
@@ -404,18 +478,21 @@ function App() {
               <button className="delete" aria-label="close" onClick={()=>mint()}></button>
             </header>
             <section className="modal-card-body">
-              <p>mint directly to layer 1 (more expensive / immediately usable)</p>
+              <p><strong>layer 1</strong></p>
+              <p>mint to layer 1 (more expensive / immediately usable)</p>
               <MemeButton onClick={()=>mintNFT()}>mint to L1</MemeButton>
               <p>{mintStatus}</p>
-              {/* <hr />
-              <p>mint to layer 2 (significant cheaper / delay in usability)</p>
-              <MemeButton onClick={()=>mintNFT()}>mint to arbitrum</MemeButton> */}
+              <hr />
+              <p><strong>SKALE</strong></p>
+              <p>mint to SKALE (cheaper / requires bridging from SKALE to l1)</p>
+              <MemeButton onClick={()=>switchToSKALE()}>switch metamask to SKALE</MemeButton>
+              &nbsp;
+              <MemeButton onClick={()=>mintToSKALE()}>mint to SKALE</MemeButton>
             </section>
             <footer className="modal-card-foot">
             </footer>
             </div>
           </div>
-
         </div>
       </Route>
       <Route path="/gallery">

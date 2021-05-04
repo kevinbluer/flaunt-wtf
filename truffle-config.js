@@ -23,6 +23,15 @@ module.exports = {
         network_id: "42",
         gas: 5500000
       },
+      skaleTestnet: {
+        provider: () => new HDWalletProvider(
+          `0x2af29ad07f9308139a87e1518952e646eb91ffbd8fc23af16355c0102b45995e`, 
+          `http://eth-global-0.skalenodes.com:10643`
+        ),
+        gasPrice: 0,
+        network_id: "*",
+        skipDryRun: true
+      },
       arbitrumRemote: {
         provider: function () {
           return wrapProvider(
