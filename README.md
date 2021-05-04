@@ -52,10 +52,10 @@ yarn start
 ## TODO
 
 - [ ] Directories (components, etc)
-- [ ] Ability to load an existing NFT (address bar / id)
+- [x] Ability to load an existing NFT (address bar / id)
 - [x] Ability to meme-ify (sketch on top, add icons, emojis, etc)
 - [x] Ability to save generated metadata to IPFS (and recieved CID)
-- [ ] Ability to generate the derivative (new) NFT on an L2
+- [x] Ability to generate the derivative (new) NFT on an L2
 - [ ] Ability to move asset back to L1 via bridge
 - [x] Ability to view what other people have created, etc (should be just incrementing the ids)
 - [x] Ability to flaunt.wtf via a custom route for each asset

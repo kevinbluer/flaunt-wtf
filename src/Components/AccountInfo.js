@@ -68,7 +68,7 @@ async function refreshBalances(){
         />
         <div className="container">
         <div style={{ display: "flex", flexDirection: "column", width: "100%", justifyContent: "center", alignItems: "center", margin: 20 }}>
-          <div style={{margin:20}}>
+          <div style={{margin:4}}>
             Wallet address: <i>{walletAddress}</i>
           </div>
           <div>

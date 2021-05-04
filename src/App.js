@@ -147,7 +147,16 @@ function App() {
   const [description, setDescription] = useState('');
   const [isValidL1, setIsValidL1] = useState();
 
+
+  // TODO - detect network and load from the appropriate contract
+
+  console.log(l1Signer || l1Provider)
   const contract = new ethers.Contract("0xe41eE07A9F41CD1Ab4e7F25A93321ba1Dc0Ec5b0", abi, l1Signer || l1Provider);
+
+  // kovan - 0xe41eE07A9F41CD1Ab4e7F25A93321ba1Dc0Ec5b0
+  // skale - 0x6bef29BdBf7de18caf2fA2422A4ec3d4c7d0a064
+  // arbitrum - 0xe41eE07A9F41CD1Ab4e7F25A93321ba1Dc0Ec5b0
+
   const infuraProvider = new ethers.providers.InfuraProvider();
 
   const checkNetworks = async () => {
@@ -365,8 +374,18 @@ function App() {
     setImportId(Math.floor(Math.random() * 24437));
   }
 
-  const mintToSKALE = () => {
+  const mintToSKALE = async () => {
+    debugger;
+    setMintStatus('minting...')
+    const address = await l1Signer.getAddress();
+    const tx = await contract.mint(address, metadataCID);
+    setMintStatus('transaction sent!');
+    await tx.wait();
+    setMintStatus('minted! head to the gallery to check it out');
+  }
 
+  const mintToArb = async () => {
+    alert(`...`)
   }
 
   useEffect(() => {
@@ -489,6 +508,11 @@ function App() {
               <MemeButton onClick={()=>switchToSKALE()}>switch metamask to SKALE</MemeButton>
               &nbsp;
               <MemeButton onClick={()=>mintToSKALE()}>mint to SKALE</MemeButton>
+              <hr />
+              <p><strong>arbitrum</strong></p>
+              <p>mint to arbitrum (cheaper / requires bridging to l1)</p>
+              &nbsp;
+              <MemeButton onClick={()=>mintToArb()}>mint to arbitrum</MemeButton>
             </section>
             <footer className="modal-card-foot">
             </footer>
