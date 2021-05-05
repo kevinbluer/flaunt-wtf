@@ -1,21 +1,30 @@
 import React, { useEffect, useState } from "react";
 // import { PageHeader, Button } from "antd";
 import { useArbTokenBridge } from "token-bridge-sdk";
-import { utils } from "ethers";
+import { ethers, utils } from "ethers";
 import { toast, ToastContainer  } from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
 
 
-function AccountInfo({handleLogout, privKey, bridgeDetails}) {
-const bridge = useArbTokenBridge(
-    bridgeDetails, false
-)
+function AccountInfo({handleLogout, privKey, bridgeDetails, arbProvider, arbSigner}) {
+  const bridge = useArbTokenBridge(
+        bridgeDetails, false
+  )
 
 const {
   walletAddress,
   balances,
 } = bridge;
  console.log("bridge", bridge)
+
+ const abi = [
+    "function totalSupply() view returns (uint)",
+    "function tokenByIndex(uint) view returns (uint)",
+    "function tokenURI(uint) view returns (string)",
+    "function mint(address, string) returns (uint)"
+  ];
+
+ const contractArbitrum = new ethers.Contract("0xe41eE07A9F41CD1Ab4e7F25A93321ba1Dc0Ec5b0", abi, arbSigner);
 
  useEffect(()=>{
     window.setTimeout(async()=>{
@@ -52,6 +61,11 @@ async function withdrawEthToArbitrum(){
 async function refreshBalances(){
   await balances.update()
   toast.success("Balance refreshed successfully");
+}
+
+const mint = async () => {
+  debugger
+  const tx = await contractArbitrum.mint(walletAddress, "");
 }
 
  return (
@@ -92,6 +106,9 @@ async function refreshBalances(){
             </button>
             <button onClick={refreshBalances}>
                 refresh balances
+            </button>
+            <button onClick={mint}>
+                mint
             </button>
           </div>
         </div>

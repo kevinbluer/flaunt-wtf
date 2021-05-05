@@ -36,30 +36,6 @@ const IPFS = require('ipfs-mini');
 const ipfs = new IPFS({ host: 'ipfs.infura.io', port: 5001, protocol: 'https' });
 const ipfsClient = require("ipfs-http-client");
 
-// const provider = new ethers.providers.InfuraProvider();
-
-let l1Provider, l1Signer, l2Signer;
-let walletDetected = !!window.ethereum;
-
-try {
-  if (window.ethereum) {
-    window.ethereum.enable().then(l1Provider = new ethers.providers.Web3Provider(window.ethereum));
-    l1Signer = l1Provider.getSigner();
-  } else {
-    l1Provider = ethers.getDefaultProvider('kovan');
-  }
-    
-} catch (err) {
-  console.log(err);
-}
-
-const abi = [
-  "function totalSupply() view returns (uint)",
-  "function tokenByIndex(uint) view returns (uint)",
-  "function tokenURI(uint) view returns (string)",
-  "function mint(address, string) returns (uint)"
-];
-
 const StyledSketchField = styled(SketchField)`
   margin-top: 1rem;
   box-shadow:
@@ -133,6 +109,33 @@ const ThumbImg = styled.img`
   cursor: pointer;
 `;
 
+// const provider = new ethers.providers.InfuraProvider();
+
+let l1Provider, l1Signer, skaleProvider, arbitrumProvider;
+let walletDetected = !!window.ethereum;
+
+try {
+  if (window.ethereum) {
+    window.ethereum.enable().then(l1Provider = new ethers.providers.Web3Provider(window.ethereum));
+    l1Signer = l1Provider.getSigner();
+  } else {
+    l1Provider = ethers.getDefaultProvider('kovan');
+  }
+  
+  skaleProvider = new ethers.providers.JsonRpcProvider(`https://dev-testnet-v1-0.skalelabs.com`)
+  arbitrumProvider = new ethers.providers.JsonRpcProvider(`https://kovan4.arbitrum.io/rpc`)
+
+} catch (err) {
+  console.log(err);
+}
+
+const abi = [
+  "function totalSupply() view returns (uint)",
+  "function tokenByIndex(uint) view returns (uint)",
+  "function tokenURI(uint) view returns (string)",
+  "function mint(address, string) returns (uint)"
+];
+
 function App() {
   const [imageCID, setImageCID] = useState('');
   const [metadataCID, setMetadataCID] = useState('');
@@ -152,6 +155,8 @@ function App() {
 
   console.log(l1Signer || l1Provider)
   const contract = new ethers.Contract("0xe41eE07A9F41CD1Ab4e7F25A93321ba1Dc0Ec5b0", abi, l1Signer || l1Provider);
+  const contractSkale = new ethers.Contract("0x6bef29BdBf7de18caf2fA2422A4ec3d4c7d0a064", abi, skaleProvider);
+  const contractArbitrum = new ethers.Contract("0xe41eE07A9F41CD1Ab4e7F25A93321ba1Dc0Ec5b0", abi, arbitrumProvider);
 
   // kovan - 0xe41eE07A9F41CD1Ab4e7F25A93321ba1Dc0Ec5b0
   // skale - 0x6bef29BdBf7de18caf2fA2422A4ec3d4c7d0a064
@@ -523,7 +528,7 @@ function App() {
       <Route path="/gallery">
         <div className="App">
           <Navigation />
-          <Gallery contract={contract} walletDetected={walletDetected} />
+          <Gallery contract={contract} contractSkale={contractSkale} contractArbitrum={contractArbitrum} walletDetected={walletDetected} />
         </div>
       </Route>
       <Route path="/about">

@@ -21,6 +21,7 @@ function Login() {
   const [loading, setLoading] = useState(false);
   const [openlogin, setSdk] = useState(undefined);
   const [bridgeInstance, setArbitrumBridge] = useState(null);
+  const [arbSigner, setArbSigner] = useState(null);
   const [accountDialog, showAccountDialog] = useState(false);
   
   useEffect(() => {
@@ -60,6 +61,7 @@ function Login() {
     const arbSigner = new ethers.Wallet(privateKey, arbProvider);
     const bridgeInstance = new Bridge(kovan4_testnet_config.erc20BridgeAddress,kovan4_testnet_config.arbTokenBridgeAddress, ethSigner, arbSigner);
     setArbitrumBridge(bridgeInstance);
+    setArbSigner(arbSigner);
   }
 
   const handleLogout = async () => {
@@ -104,6 +106,8 @@ function Login() {
             handleLogout={handleLogout}
             loading={loading}
             privKey={openlogin?.privKey}
+            arbProvider={arbProvider}
+            arbSigner={arbSigner}
           />
         :
         <span>initializing...</span>

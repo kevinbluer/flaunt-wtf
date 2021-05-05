@@ -6,49 +6,65 @@ import {
 
 import { Button  } from 'react-bulma-components';
 
-const Gallery = ({contract, walletDetected}) => {
-  const [assets, setAssets] = useState([])
-  const [totalSupply, setTotalSupply] = useState(0)
+const Gallery = ({contract, contractSkale, contractArbitrum, walletDetected}) => {
+  const [arbAssets, setArbAssets] = useState([])
+  const [l1Assets, setL1Assets] = useState([])
 
-  const load = async () => {
-    console.log(contract)
-    const totalSupplyNum = (await contract.totalSupply()).toNumber();
+  const loadArb = async () => {
 
-    setTotalSupply(totalSupplyNum)
+    const totalSupplyNum = ((await contractArbitrum.totalSupply()).toNumber());
+
+    const items = [...Array(totalSupplyNum)].map(async (_, i) => {
+      const id = i+1;
+      const item = await contractArbitrum.tokenURI(id)
+
+      const newItem = (
+        <li key={i}><Link to={`/v/${id}`}>{`${item} (${id})`}</Link></li>
+      );
+
+      setArbAssets((prev) => {
+        return [...prev, newItem];
+      });
+    });
+  }
+
+  const loadL1 = async () => {
+
+    const totalSupplyNum = ((await contract.totalSupply()).toNumber());
 
     const items = [...Array(totalSupplyNum)].map(async (_, i) => {
       const id = i+1;
       const item = await contract.tokenURI(id)
 
-      // const metata = await fetch(item);
-
       const newItem = (
-        <li key={i}>
-          <Link to={`/v/${id}`}>
-            {`${item} (${id})`}
-          </Link>
-        </li>
+        <li key={i}><Link to={`/v/${id}`}>{`${item} (${id})`}</Link></li>
       );
 
-      setAssets((prev) => {
+      setL1Assets((prev) => {
         return [...prev, newItem];
       });
     });
   }
 
   useEffect(() => {
-    // if (walletDetected) {
-      load()
-    // }
+    loadArb()
+    loadL1()
   }, [])
   
   return (
     <div className="App">
       <h2>Gallery</h2>
       <header className="App-header">
-        <p>all the meme-ified goodness ({totalSupply})</p>
+        <p>all the meme-ified goodness</p>
+        <br />
+        <div><strong>kovan l1</strong></div>
         <ul>
-          {assets}
+          {l1Assets}
+        </ul>
+        <br />
+        <div><strong>arbitrum l2</strong></div>
+        <ul>
+          {arbAssets}
         </ul>
       </header>
     </div>
