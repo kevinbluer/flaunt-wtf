@@ -32,8 +32,8 @@ const Gallery = ({contract, contractSkale, contractArbitrum, walletDetected}) =>
 
       });
 
-    } catch {
-      
+    } catch (err) {
+      console.log(err)
     }
 
     
@@ -58,8 +58,8 @@ const Gallery = ({contract, contractSkale, contractArbitrum, walletDetected}) =>
         });
       });
 
-    } catch {
-      
+    } catch (err) {
+      console.log(err)
     }
 
 
@@ -76,14 +76,20 @@ const Gallery = ({contract, contractSkale, contractArbitrum, walletDetected}) =>
       <header className="App-header">
         <p>all the meme-ified goodness</p>
         <br />
-        <div><strong>kovan l1</strong></div>
+        <div><strong>l1</strong></div>
+        <div>kovan</div>
         <ul>
-          {l1Assets}
+          {l1Assets.length === 0 ? "loading..." : l1Assets}
         </ul>
         <br />
-        <div><strong>arbitrum l2</strong></div>
+        <div><strong>l2</strong></div>
+        <div>arbitrum</div>
         <ul>
-          {arbAssets}
+          {arbAssets.length === 0 ? "loading..." : arbAssets}
+        </ul>
+        <br />
+        <div>skale</div>
+        <ul>
         </ul>
       </header>
     </div>
