@@ -32,7 +32,10 @@ yarn start
 ### Layer 1
 
 - Kovan L1: 0xe41eE07A9F41CD1Ab4e7F25A93321ba1Dc0Ec5b0
-- SKALE L2: 0x6bef29BdBf7de18caf2fA2422A4ec3d4c7d0a064
+
+### Layer 2
+
+- SKALE Testnet: 0x6bef29BdBf7de18caf2fA2422A4ec3d4c7d0a064
 - Arbitrum Kovan4 - 0xe41eE07A9F41CD1Ab4e7F25A93321ba1Dc0Ec5b0
 
 ## Libraries
