@@ -12,38 +12,57 @@ const Gallery = ({contract, contractSkale, contractArbitrum, walletDetected}) =>
 
   const loadArb = async () => {
 
-    const totalSupplyNum = ((await contractArbitrum.totalSupply()).toNumber());
+    try {
 
-    const items = [...Array(totalSupplyNum)].map(async (_, i) => {
-      const id = i+1;
-      const item = await contractArbitrum.tokenURI(id)
+      const totalSupplyNum = ((await contractArbitrum.totalSupply()).toNumber());
 
-      const newItem = (
-        <li key={i}><Link to={`/v/${id}`}>{`${item} (${id})`}</Link></li>
-      );
+      const items = [...Array(totalSupplyNum)].map(async (_, i) => {
+        const id = i+1;
+        const item = await contractArbitrum.tokenURI(id)
+  
+        if (id > 2) {
+          const newItem = (
+            <li key={i}><Link to={`/v/${id}`}>{`${item} (${id})`}</Link></li>
+          );
+    
+          setArbAssets((prev) => {
+            return [...prev, newItem];
+          });
+        }
 
-      setArbAssets((prev) => {
-        return [...prev, newItem];
       });
-    });
+
+    } catch {
+      
+    }
+
+    
   }
 
   const loadL1 = async () => {
 
-    const totalSupplyNum = ((await contract.totalSupply()).toNumber());
+    try {
 
-    const items = [...Array(totalSupplyNum)].map(async (_, i) => {
-      const id = i+1;
-      const item = await contract.tokenURI(id)
+      const totalSupplyNum = ((await contract.totalSupply()).toNumber());
 
-      const newItem = (
-        <li key={i}><Link to={`/v/${id}`}>{`${item} (${id})`}</Link></li>
-      );
-
-      setL1Assets((prev) => {
-        return [...prev, newItem];
+      const items = [...Array(totalSupplyNum)].map(async (_, i) => {
+        const id = i+1;
+        const item = await contract.tokenURI(id)
+  
+        const newItem = (
+          <li key={i}><Link to={`/v/${id}`}>{`${item} (${id})`}</Link></li>
+        );
+  
+        setL1Assets((prev) => {
+          return [...prev, newItem];
+        });
       });
-    });
+
+    } catch {
+      
+    }
+
+
   }
 
   useEffect(() => {

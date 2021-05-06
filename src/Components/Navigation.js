@@ -15,7 +15,7 @@ const StyledLink = styled(Link)`
   color: #4a4a4a;
 `;
 
-const Navigation = () => {
+const Navigation = ({accountDialog, showAccountDialog, metadataCID}) => {
   const [navIsActive, setNavIsActive] = useState(false);
 
   return (
@@ -52,7 +52,7 @@ const Navigation = () => {
           </Navbar.Container>
           <Navbar.Container align="end">
             <Navbar.Item href="#">
-              <Login />
+              <Login accountDialog={accountDialog} showAccountDialog={showAccountDialog} metadataCID={metadataCID} />
             </Navbar.Item>
           </Navbar.Container>
         </Navbar.Menu>

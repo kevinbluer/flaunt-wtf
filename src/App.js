@@ -140,12 +140,15 @@ function App() {
   const [imageCID, setImageCID] = useState('');
   const [metadataCID, setMetadataCID] = useState('');
   const [importAddress, setImportAddress] = useState('0x3B3ee1931Dc30C1957379FAc9aba94D1C48a5405');
-  const [importId, setImportId] = useState(Math.floor(Math.random() * 24437)); // 24437, 12345, 11155, 1265, 175, 17367, 17618 :)))
+  const [importId, setImportId] = useState(Math.floor(Math.random() * 24437)); // 24437, 12345, 11155, 1265, 175, 17367, 17618, 10798 :)))
   const [tool, setTool] = useState(Tools.Select);
   const [mintStatus, setMintStatus] = useState(false);
+
   const [mintModal, setMintModal] = useState(false);
   const [loadModal, setLoadModal] = useState(false);
   const [saveModal, setSaveModal] = useState(false);
+  const [accountDialog, showAccountDialog] = useState(false);
+
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [isValidL1, setIsValidL1] = useState();
@@ -390,7 +393,8 @@ function App() {
   }
 
   const mintToArb = async () => {
-    alert(`...`)
+    setMintModal(false);
+    showAccountDialog(true);
   }
 
   useEffect(() => {
@@ -401,7 +405,7 @@ function App() {
     <Switch>
       <Route path="/" exact>
         <div className="App">
-          <Navigation />
+          <Navigation accountDialog={accountDialog} showAccountDialog={showAccountDialog} metadataCID={metadataCID} />
           { 
             !isValidL1 ? (<div>unable to detect valid network. please connect to the kovan l1 testnet</div>) : <></>
           }
@@ -514,10 +518,10 @@ function App() {
               &nbsp;
               <MemeButton onClick={()=>mintToSKALE()}>mint to SKALE</MemeButton>
               <hr />
-              <p><strong>arbitrum</strong></p>
+              <p><strong>arbitrum via torus</strong></p>
               <p>mint to arbitrum (cheaper / requires bridging to l1)</p>
               &nbsp;
-              <MemeButton onClick={()=>mintToArb()}>mint to arbitrum</MemeButton>
+              <MemeButton onClick={()=>mintToArb()}>mint to arbitrum via torus</MemeButton>
             </section>
             <footer className="modal-card-foot">
             </footer>
@@ -527,25 +531,25 @@ function App() {
       </Route>
       <Route path="/gallery">
         <div className="App">
-          <Navigation />
+          <Navigation accountDialog={accountDialog} showAccountDialog={showAccountDialog} />
           <Gallery contract={contract} contractSkale={contractSkale} contractArbitrum={contractArbitrum} walletDetected={walletDetected} />
         </div>
       </Route>
       <Route path="/about">
         <div className="App">
-          <Navigation />
+          <Navigation accountDialog={accountDialog} showAccountDialog={showAccountDialog} />
           <About />
         </div>
       </Route>
       <Route path="/v/:id">
         <div className="App">
-          <Navigation />
+          <Navigation accountDialog={accountDialog} showAccountDialog={showAccountDialog} />
           <View contract={contract} walletDetected={walletDetected} />
         </div>
       </Route>
       <Route component={NotFound}>
         <div className="App">
-          <Navigation />
+          <Navigation accountDialog={accountDialog} showAccountDialog={showAccountDialog} />
           <NotFound />
         </div>
       </Route>

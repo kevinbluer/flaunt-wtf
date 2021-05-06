@@ -17,12 +17,11 @@ const ethProvider = ethers.providers.getDefaultProvider(kovan4_testnet_config.et
 const arbProvider = new ethers.providers.JsonRpcProvider(kovan4_testnet_config.arbRPC);
 
 
-function Login() {
+function Login({showAccountDialog, accountDialog, metadataCID}) {
   const [loading, setLoading] = useState(false);
   const [openlogin, setSdk] = useState(undefined);
   const [bridgeInstance, setArbitrumBridge] = useState(null);
   const [arbSigner, setArbSigner] = useState(null);
-  const [accountDialog, showAccountDialog] = useState(false);
   
   useEffect(() => {
     setLoading(true);
@@ -95,7 +94,7 @@ function Login() {
       <div className="modal-background"></div>
       <div className="modal-content">
       <header className="modal-card-head">
-        <p className="modal-card-title">account</p>
+        <p className="modal-card-title">arbitrum (via torus)</p>
         <button className="delete" aria-label="close" onClick={()=> showAccountDialog(false) }></button>
       </header>
       <section className="modal-card-body">
@@ -108,9 +107,10 @@ function Login() {
             privKey={openlogin?.privKey}
             arbProvider={arbProvider}
             arbSigner={arbSigner}
+            metadataCID={metadataCID}
           />
         :
-        <span>initializing...</span>
+        <span>please login into your torus account first</span>
         }
       </section>
       <footer className="modal-card-foot">
