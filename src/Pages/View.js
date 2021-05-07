@@ -71,7 +71,7 @@ const Gallery = ({contract, walletDetected}) => {
       <header className="App-header">
         {
           svg === undefined ?
-          (`loading`) : <StyledSVG src={svg} wrapper="span" />
+          (`loading...`) : <StyledSVG src={svg} wrapper="span" />
         }
         <Title>{title}</Title>
         <div>{description}</div>

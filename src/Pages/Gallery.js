@@ -20,9 +20,9 @@ const Gallery = ({contract, contractSkale, contractArbitrum, walletDetected}) =>
         const id = i+1;
         const item = await contractArbitrum.tokenURI(id)
   
-        if (id > 2) {
+        if (item.length > 10) {
           const newItem = (
-            <li key={i}><Link to={`/v/${id}`}>{`${item} (${id})`}</Link></li>
+            <li key={i}><Link to={`/v/arb/${id}`}>{`${item} (${id})`}</Link></li>
           );
     
           setArbAssets((prev) => {
@@ -32,11 +32,9 @@ const Gallery = ({contract, contractSkale, contractArbitrum, walletDetected}) =>
 
       });
 
-    } catch {
-      
+    } catch (err) {
+      console.log(err)
     }
-
-    
   }
 
   const loadL1 = async () => {
@@ -58,8 +56,8 @@ const Gallery = ({contract, contractSkale, contractArbitrum, walletDetected}) =>
         });
       });
 
-    } catch {
-      
+    } catch (err) {
+      console.log(err)
     }
 
 
@@ -76,14 +74,20 @@ const Gallery = ({contract, contractSkale, contractArbitrum, walletDetected}) =>
       <header className="App-header">
         <p>all the meme-ified goodness</p>
         <br />
-        <div><strong>kovan l1</strong></div>
+        <div><strong>l1</strong></div>
+        <div>kovan</div>
+        <br />
         <ul>
-          {l1Assets}
+          {l1Assets.length === 0 ? "loading..." : l1Assets}
         </ul>
         <br />
-        <div><strong>arbitrum l2</strong></div>
+        <div><strong>l2</strong></div>
+        <div>arbitrum / skale</div>
+        <br />
         <ul>
-          {arbAssets}
+          {arbAssets.length === 0 ? "loading..." : arbAssets}
+        </ul>
+        <ul>
         </ul>
       </header>
     </div>

@@ -16,6 +16,7 @@ import Navigation from "./Components/Navigation";
 import Gallery from "./Pages/Gallery";
 import About from "./Pages/About";
 import View from "./Pages/View";
+import ViewArb from "./Pages/ViewArb";
 import NotFound from './Pages/NotFound';
 
 import eyes from './Assets/eyes.png';
@@ -539,6 +540,12 @@ function App() {
         <div className="App">
           <Navigation accountDialog={accountDialog} showAccountDialog={showAccountDialog} />
           <About />
+        </div>
+      </Route>
+      <Route path="/v/arb/:id">
+        <div className="App">
+          <Navigation accountDialog={accountDialog} showAccountDialog={showAccountDialog} />
+          <ViewArb contractArbitrum={contractArbitrum} walletDetected={walletDetected} />
         </div>
       </Route>
       <Route path="/v/:id">
